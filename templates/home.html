@@ -1,0 +1,34 @@
+{% extends 'index.html'%}
+{% block title %}
+My Body's Ready
+{% endblock %}
+{% block content %}
+<script type="text/javascript">
+	window.appConfig = { username: '{{ username }}', color: '{{ color }}' }
+</script>
+<br/>
+	<b><div style="font-size: 40px; text-align: center;">WELCOME TO MY PAINTING PALACE MY G, {{ username }}</div></b>
+	<div class="wrapper">
+		<canvas class="canvas" id="canvas" width="800" height="500"></canvas>
+		<script type ="text/javascript" src="{{ url_for('static', filename='js/paint.js') }}"></script>
+		<script type ="text/javascript" src="{{ url_for('static', filename='js/chat.js') }}"></script>
+		<div class="toolbar">
+			<button class="button" id="blue" style="background-color: #0000ff"></button>
+			<button class="button" id="red" style="background-color: #e62e00"></button>
+			<button class="button" id="green" style="background-color: #009933"></button>
+			<button class="button" id="yellow" style="background-color: #ffff00"></button>
+			<button class="button" id="white" style="background-color: #ffffff"></button>
+			<button class="button" id="black" style="background-color: #000000"></button>
+			<button class="button" id="small" style="background: url('{{ url_for('static', filename='pics/small.png') }}'); background-size: contain;"></button>
+			<button class="button" id="medium" style="background: url('{{ url_for('static', filename='pics/medium.png') }}'); background-size: contain;"></button>
+			<button class="button" id="big" style="background: url('{{ url_for('static', filename='pics/big.png') }}'); background-size: contain;"></button>
+			<button class="button" id="clearbt" style="background: url('{{ url_for('static', filename='pics/trashcan.png') }}'); background-size: contain;"></button>
+			<button class="button" id="download" style="background-size: contain;"></button>
+		</div>
+		<div class="chat">
+			<div class="messageBox" id="messages"></div>
+			<input type="text" id="chatinput" name="text" placeholder="Type in chat..."><br>
+			<input type="submit" id="submit">
+		</div>
+	</div>
+{% endblock %}

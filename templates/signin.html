@@ -1,0 +1,10 @@
+{% extends 'index.html'%}
+{% block title %}
+My Body's Ready
+{% endblock %}
+{% block content %}
+<form action="{{ url_for('signin') }}" method="post">
+	<input type="text" name="username" placeholder="Enter your username...">
+	<input type="submit" name="submit">
+</form>
+{% endblock %}
