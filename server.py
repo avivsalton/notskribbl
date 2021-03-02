@@ -13,17 +13,21 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 def signin():
     if request.method == "POST":
         username = request.form.get("username")
-        index = random.randint(0,5)
+        index = random.randint(0, 5)
+        if username == "viewer":
+            return viewer(username, index)
         return home(username, index)
     return render_template("signin.html")
 
 def home(username, index):
     return render_template("home.html", username=username, color=colors[index])
 
+def viewer(username, index):
+    return render_template("viewer.html", username=username, color=colors[index])
+
 @socketio.on('message')
 def handleMessage(msg):
     if msg:
-        print('Message: ' + msg)
         send(msg, broadcast=True)
 
 

@@ -39,6 +39,7 @@ window.addEventListener('load', function () {
   function tool_pencil () {
     var tool = this;
     this.started = false;
+    var socket = io.connect('http://127.0.0.1'); // Connecting to server through socket.io
 
     // This is called when you start holding down the mouse button.
     // This starts the pencil drawing.
@@ -47,7 +48,7 @@ window.addEventListener('load', function () {
         context.moveTo(ev._x, ev._y);
         context.arc(ev._x, ev._y, context.lineWidth / 12, 0, 2 * Math.PI, true);
         tool.started = true;
-        socket.send("paint$%*!" + appConfig.username + "$%*!" + ev._x + "$%*!" + ev._y);
+        socket.send("startPaint$%*!" + appConfig.username + "$%*!" + ev._x + "$%*!" + ev._y + "$%*!" + context.lineWidth + "$%*!" + context.strokeStyle); // Sending to the server to start painting on viewers' side 
     };
 
     // This function is called every time you move the mouse. Obviously, it only 
@@ -56,7 +57,7 @@ window.addEventListener('load', function () {
     this.mousemove = function (ev) {
       if (tool.started) {
         context.lineTo(ev._x, ev._y);
-        socket.send("paint$%*!" + appConfig.username + "$%*!" + ev._x + "$%*!" + ev._y);
+        socket.send("paint$%*!" + appConfig.username + "$%*!" + ev._x + "$%*!" + ev._y); // Sending to the server to continue painting on viewers' side 
         context.stroke();
       }
     };
@@ -68,20 +69,6 @@ window.addEventListener('load', function () {
         tool.started = false;
       }
     };
-
-    var socket = io.connect('http://127.0.0.1');
-    socket.on('message', function(msg) {
-      var res = msg.split("$%*!");
-      if (res[0] == "paint" && res[1] != appConfig.username)
-      { 
-        alert(msg);
-        context.beginPath();
-        ev._x = res[2];
-        ev._y = res[3];
-        context.lineTo(ev._x, ev._y);
-        context.stroke();
-      } 
-    });
   }
 
   // The general-purpose event handler. This function just determines the mouse 
@@ -102,6 +89,8 @@ window.addEventListener('load', function () {
     }
   }
 
+  // Defining all of the coloring buttons
+  // ---TODO---: Add more color options
   blue = document.getElementById('blue');
   red = document.getElementById('red');
   green = document.getElementById('green');
@@ -109,6 +98,7 @@ window.addEventListener('load', function () {
   black = document.getElementById('black');
   white = document.getElementById('white');
 
+  // Making functions for each button to change color
   blue.onclick = function () {
     	context.strokeStyle = "#0000ff";
   }
@@ -133,12 +123,14 @@ window.addEventListener('load', function () {
     	context.strokeStyle = "#ffffff";
   }
 
+  // Defining the tools buttons
   small = document.getElementById('small');
   medium = document.getElementById('medium');
   big = document.getElementById('big');
   clearbt = document.getElementById('clearbt');
   download = document.getElementById('download');
 
+  // Defining the actions for the tools buttons
   small.onclick = function () {
   	context.lineWidth = 2;
   }
@@ -151,10 +143,14 @@ window.addEventListener('load', function () {
   	context.lineWidth = 10;
   }
 
+  // Clearing the canvas
   clearbt.onclick = function () {
   	context.clearRect(0, 0, canvas.width, canvas.height);
+    var socket = io.connect('http://127.0.0.1');
+    socket.send("delete$%*!"); // Sending to server that the board has been cleared
   }
 
+  // ---FIX---: Saving the paintings in canvas as an image
   download.onclick = function () {
   	alert('okay');
   	canvas.src = canvas.toDataURL();

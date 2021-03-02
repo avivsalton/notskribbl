@@ -6,15 +6,14 @@
 }
 
 .wrapper {
+	display: flex;
 	padding-top: 50px;
-	margin: auto;
-	width: 900px;
+	width: 1200px;
 }
 
 .toolbar {
-	margin: : auto;
+	margin-top: 10px;
 	width: : 100%;
-	overflow: auto;
 }
 
 .toolbar .button {
@@ -29,29 +28,30 @@
 	height: 500px;
 	border: 1px solid black;
 	margin-bottom: 20px;
+	margin-left: 260px;
 }
 
 .chat {
-	display: inline-block;
-	padding-left: 100%;
-	padding-top: -100px;
+	flex: 1;
+	padding-left: 10px;
 }
 
 .chat #chatinput {
 	height: 30px;
-	width: 300px;
+	width: 100%;
+	margin-bottom: 3px;
 }
 
 .chat .messageBox {
 	border: 1px solid black;
-	height: 500px;
+	height: 467px;
 	width: 300px;
 	margin-bottom: 3px;
 	overflow: auto;
 }
 
 .chat .message {
-	height: 70px;
+	height: 60px;
 	width: 90%;
 	border: 1px solid black;
 	margin: 15px;
@@ -70,4 +70,25 @@
 	margin: 12px;
 	margin-top: -8px;
 	font-size: 15px;
+}
+
+.players {
+	position: fixed;
+	float: left;
+	height: 500px;
+	width: 250px;
+	border: 1px solid black;
+}
+
+.players .gamer {
+	width: 100%;
+	height: 60px;
+	border: 1px solid black;
+}
+
+.players p.gamer {
+	margin-top: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 5em;
 }

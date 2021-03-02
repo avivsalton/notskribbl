@@ -1,0 +1,20 @@
+{% extends 'index.html'%}
+{% block title %}
+My Body's Ready
+{% endblock %}
+{% block content %}
+<script type="text/javascript">
+	window.appConfig = { username: '{{ username }}', color: '{{ color }}' }
+</script>
+<br/>
+	<b><div style="font-size: 40px; text-align: center;">WELCOME TO MY PAINTING PALACE MY G, {{ username }}</div></b>
+	<div class="wrapper">
+		<canvas class="canvas" id="canvas" width="800" height="500"></canvas>
+		<script type ="text/javascript" src="{{ url_for('static', filename='js/viewer.js') }}"></script>
+		<script type ="text/javascript" src="{{ url_for('static', filename='js/chat.js') }}"></script>
+		<div class="chat">
+			<div class="messageBox" id="messages"></div>
+			<input type="text" id="chatinput" name="text" placeholder="Type in chat..." style="width: 100%;"><br>
+		</div>
+	</div>
+{% endblock %}
