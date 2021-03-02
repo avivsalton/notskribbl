@@ -9,7 +9,7 @@ if(window.addEventListener) {
       context = canvas.getContext('2d');
       context.lineWidth = 5;
 
-      var socket = io.connect('http://127.0.0.1'); // Connects to server through socket.io
+      var socket = io.connect('http://' appConfig.ip); // Connects to server through socket.io
 
       socket.on('message', function(msg) {
 

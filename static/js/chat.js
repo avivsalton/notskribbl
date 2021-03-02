@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-	var socket = io.connect('http://127.0.0.1'); // Connects to server through socket.io
+	var socket = io.connect('http://' + appConfig.ip); // Connects to server through socket.io
 
 	// When 'enter' key is pressed, send message in text box
 	$('#chatinput').keypress(function(e){
@@ -43,7 +43,16 @@ $(document).ready(function() {
 		if (res[0] == "connect")
 		{
 			$("#messages").append('<div class="message" style="height: 30px;"><div class="user" style="color: #339933; text-align: center;">' + res[1] + ' has connected</div>');
-		} 
+			$("#players").append('<div class="gamer"><div class="user">' + res[1] + '</div><div class="points" id="points">Points: 0</div></div>');
+		}
+
+		if (res[0] == "connected")
+		{
+			if (res[1] != appConfig.username)
+			{
+				$("#players").append('<div class="gamer"><div class="user">' + res[1] + '</div><div class="points" id="points">Points: 0</div></div>');
+			}
+		}
 
 		// Receiving a disconnection message
 		if (res[0] == "disconnect")

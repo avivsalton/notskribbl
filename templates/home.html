@@ -3,19 +3,10 @@
 My Body's Ready
 {% endblock %}
 {% block content %}
-<script type="text/javascript">
-	window.appConfig = { username: '{{ username }}', color: '{{ color }}' }
-</script>
 <br/>
 <b><div style="font-size: 40px; text-align: center;">WELCOME TO MY PAINTING PALACE MY G, {{ username }}</div></b>
-<center>
 <div class="wrapper">
-	<div class="players">
-		<div class="gamer">
-			<br>
-			<p><b>Gamer</b></p>
-			<p>Points: 0</p>
-		</div>
+	<div class="players" id="players">
 	</div>
 	<div class="canvas">
 		<canvas id="canvas" width="800" height="500"></canvas>
@@ -41,5 +32,4 @@ My Body's Ready
 	</div>
 	<br>
 </div>
-</center>
 {% endblock %}

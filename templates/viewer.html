@@ -9,6 +9,8 @@ My Body's Ready
 <br/>
 	<b><div style="font-size: 40px; text-align: center;">WELCOME TO MY PAINTING PALACE MY G, {{ username }}</div></b>
 	<div class="wrapper">
+		<div class="players" id="players">
+		</div>
 		<canvas class="canvas" id="canvas" width="800" height="500"></canvas>
 		<script type ="text/javascript" src="{{ url_for('static', filename='js/viewer.js') }}"></script>
 		<script type ="text/javascript" src="{{ url_for('static', filename='js/chat.js') }}"></script>

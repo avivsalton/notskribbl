@@ -5,13 +5,21 @@
 	font-size: 14px;
 }
 
+h2 {
+	font-size: 60px;
+	text-align: center;
+	margin-top: 10px; 
+}
+
 .wrapper {
+	margin: auto;
 	display: flex;
 	padding-top: 50px;
 	width: 1200px;
 }
 
 .toolbar {
+	margin: auto;
 	margin-top: 10px;
 	width: : 100%;
 }
@@ -86,9 +94,40 @@
 	border: 1px solid black;
 }
 
-.players p.gamer {
-	margin-top: 10px;
-	margin-left: auto;
-	margin-right: auto;
-	width: 5em;
+.players .gamer .user {
+	text-align: center;
+	font-weight: bold;
+	margin-top: 11px;
+	width: 100%;
+}
+
+.players .gamer .points {
+	text-align: center;
+	width: 100%;
+}
+
+.signin {
+	width: 800px;
+	height: 400px;
+	margin: auto;
+	margin-top: 30px;
+}
+
+.signin #textbox {
+	width: 100%;
+	height: 50px;
+	font-size: 20px;
+	margin-bottom: 10px;
+}
+
+.signin #button {
+	color: white;
+	border: 1px solid black;
+	width: 100%;
+	height: 40px;
+	margin:auto;
+  	display:block;
+  	font-size: 16px;
+	border-radius: 5px;
+	margin-bottom: 10px;
 }

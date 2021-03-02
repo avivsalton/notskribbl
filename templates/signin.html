@@ -4,8 +4,12 @@ My Body's Ready
 {% endblock %}
 {% block content %}
 <!--TODO: Change style of webpage + Add room functionality-->
-<form action="{{ url_for('signin') }}" method="post">
-	<input type="text" name="username" placeholder="Enter your username...">
-	<input type="submit" name="submit">
-</form>
+<h2> WELCOME TO (NOT) SKRIBBL! </h2>
+<div class="signin">
+	<form action="" method="post">
+		<input type="text" id="textbox" name="username" placeholder="Enter your username...">
+		<input type="submit" id="button" name="submit" style="background-color: #0099cc;" value="Enter a Random Room">
+		<input type="submit" id="button" name="submit" style="background-color: #00cc00;" value="Create a Room">
+	</form>
+</div>
 {% endblock %}

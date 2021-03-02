@@ -7,6 +7,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
 </head>
 <body>
+	<script type="text/javascript">
+		window.appConfig = { username: '{{ username }}', color: '{{ color }}', ip: '{{ ip }}' }
+	</script>
 	{% block content %}
 	{% endblock %}
 </body>

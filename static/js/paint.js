@@ -39,7 +39,7 @@ window.addEventListener('load', function () {
   function tool_pencil () {
     var tool = this;
     this.started = false;
-    var socket = io.connect('http://127.0.0.1'); // Connecting to server through socket.io
+    var socket = io.connect('http://' + appConfig.ip); // Connecting to server through socket.io
 
     // This is called when you start holding down the mouse button.
     // This starts the pencil drawing.
@@ -146,7 +146,7 @@ window.addEventListener('load', function () {
   // Clearing the canvas
   clearbt.onclick = function () {
   	context.clearRect(0, 0, canvas.width, canvas.height);
-    var socket = io.connect('http://127.0.0.1');
+    var socket = io.connect('http://' + appConfig.ip);
     socket.send("delete$%*!"); // Sending to server that the board has been cleared
   }
 
