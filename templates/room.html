@@ -1,0 +1,30 @@
+{% extends 'roomheader.html'%}
+{% block title %}
+My Body's Ready
+{% endblock %}
+{% block content %}
+<h2> WELCOME TO THE GAME ROOM!</h2>
+<div class="room">
+	<div class="players">
+		<div class="gamer">
+			<div class="user">aviv</div>
+		</div>
+	</div>
+	<form action="" method="post">
+		<div class="options">
+			<p>Rounds:</p>
+			<select id="rounds">
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+			    <option value="7">7</option>
+			    <option value="8">8</option>
+			    <option value="9">9</option>
+			    <option value="10">10</option>
+			</select>
+			<input type="submit" name="submit" id="startgame" value="Start Game">
+		</div>
+	</form>
+</div>
+{% endblock %}

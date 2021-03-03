@@ -45,8 +45,11 @@ window.addEventListener('load', function () {
     // This starts the pencil drawing.
     this.mousedown = function (ev) {
         context.beginPath();
+        context.arc(ev._x, ev._y, context.lineWidth / 12, 0, 2 * Math.PI);
+        context.fillStyle = context.strokeStyle;
+        context.stroke();
+        context.fill();
         context.moveTo(ev._x, ev._y);
-        context.arc(ev._x, ev._y, context.lineWidth / 12, 0, 2 * Math.PI, true);
         tool.started = true;
         socket.send("startPaint$%*!" + appConfig.username + "$%*!" + ev._x + "$%*!" + ev._y + "$%*!" + context.lineWidth + "$%*!" + context.strokeStyle); // Sending to the server to start painting on viewers' side 
     };

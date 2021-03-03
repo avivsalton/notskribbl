@@ -9,7 +9,7 @@ if(window.addEventListener) {
       context = canvas.getContext('2d');
       context.lineWidth = 5;
 
-      var socket = io.connect('http://' appConfig.ip); // Connects to server through socket.io
+      var socket = io.connect('http://' + appConfig.ip); // Connects to server through socket.io
 
       socket.on('message', function(msg) {
 
@@ -27,6 +27,10 @@ if(window.addEventListener) {
           color = res[5];
           context.lineWidth = size;
           context.strokeStyle = color;
+          context.arc(x, y, context.lineWidth / 12, 0, 2 * Math.PI);
+          context.fillStyle = context.strokeStyle;
+          context.stroke();
+          context.fill();
           context.moveTo(x, y);
         }
 
