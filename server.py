@@ -6,7 +6,7 @@ import random
 
 app = Flask(__name__)
 username = ""
-ip = "10.100.102.200"
+ip = "10.100.102.136"
 
 colors = ['#0099cc', '#009933', '#cc0000', '#ff33cc', '#669999', '#cc9900']     # Colors generated for each user for chat
 players = []    # Players for each room
@@ -26,15 +26,23 @@ def block_method():
 
 # Connecting to every room
 @app.route('/room/<roomid>', methods=['GET', 'POST'])
-def rooms_site(roomid, username):
-    if (roomid, "private") in rooms:
-        if (roomid, username) in room_admins:
-            return render_template('room.html',username=username, isRoomAdmin="True")
+def rooms_site(roomid, index=0, username=''):
+    if not username:
+        if request.method == "POST":
+            username = request.form.get("username")
+            index = random.randint(0, 5)
+            print("fuck")
+            return rooms_site(roomid, index, username)
         else:
-            return render_template('room.html',username=username, isRoomAdmin="False")
-        return "welcome to room: " + roomid
+            return render_template("enteroom.html")
     else:
-        return "sorry this room does not exist"
+        if (roomid, "private") in rooms:
+            if (roomid, username) in room_admins:
+                return render_template('room.html',username=username, color=colors[index], ip=ip, isRoomAdmin="True", roomid=roomid)
+            else:
+                return render_template('room.html',username=username, color=colors[index], ip=ip, isRoomAdmin="False", roomid=roomid)
+        else:
+            return "sorry this room does not exist"
 
 # Home page function
 @app.route('/', methods=['GET', 'POST'])
@@ -43,7 +51,7 @@ def signin():
         username = request.form.get("username")
         if ("<script" in username) or ("'<'" in username and "script" in username):
             ip_list.append(request.environ.get('REMOTE_ADDR'))
-            return none
+            return None
         type = request.form.get("submit")
         index = random.randint(0, 5)
         players.append(username)
@@ -51,7 +59,7 @@ def signin():
             id = generate_id(rooms)
             rooms.append((id, "private"))
             room_admins.append((id, username))
-            return rooms_site(id, username)
+            return rooms_site(id, index, username)
         if username != "aviv":
             return viewer(username, index)
         return home(username, index)
@@ -73,7 +81,7 @@ def handleMessage(msg):
         splited = msg.split("$%*!")
         if ("<script" in msg) or ("'<'" in msg and "script" in msg):
             ip_list.append(request.environ.get('REMOTE_ADDR'))
-            return none
+            return None
         if splited[0] == 'connect':
             for player in players:
                 send("connected$%*!" + player)

@@ -1,8 +1,9 @@
 {% extends 'roomheader.html'%}
 {% block title %}
-My Body's Ready
+Welcome to the room!
 {% endblock %}
 {% block content %}
+<script type ="text/javascript" src="{{ url_for('static', filename='js/room.js') }}"></script>
 <h2> WELCOME TO THE GAME ROOM!</h2>
 <div class="room">
 	<div class="players">
@@ -26,5 +27,6 @@ My Body's Ready
 			<input type="submit" name="submit" id="startgame" value="Start Game">
 		</div>
 	</form>
+	share your link! {{ roomid }}
 </div>
 {% endblock %}
