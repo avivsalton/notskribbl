@@ -17,40 +17,43 @@ if(window.addEventListener) {
                                      // 'paint$%*!{x_location}$%*!{y_location}$%*!{line_size}$%*!{line_color}'
         var x, y, size, color;
 
-        // Function that starts painting on canvas
-        if (res[0] == "startPaint")
-        { 
-          context.beginPath();
-          x = parseInt(res[2]);
-          y = parseInt(res[3]);
-          size = parseInt(res[4]);
-          color = res[5];
-          context.lineWidth = size;
-          context.strokeStyle = color;
-          context.arc(x, y, context.lineWidth / 12, 0, 2 * Math.PI);
-          context.fillStyle = context.strokeStyle;
-          context.stroke();
-          context.fill();
-          context.moveTo(x, y);
-        }
-
-        // Function that continues to paint on canvas
-        if (res[0] == "paint")
+        if (res[1] == appConfig.roomid)
         {
-          x = parseInt(res[2]);
-          y = parseInt(res[3]);
-          size = parseInt(res[4]);
-          color = res[5];
-          context.lineWidth = size;
-          context.strokeStyle = color;
-          context.lineTo(x, y);
-          context.stroke();
-        }
+          // Function that starts painting on canvas
+          if (res[0] == "startPaint")
+          { 
+            context.beginPath();
+            x = parseInt(res[2]);
+            y = parseInt(res[3]);
+            size = parseInt(res[4]);
+            color = res[5];
+            context.lineWidth = size;
+            context.strokeStyle = color;
+            context.arc(x, y, context.lineWidth / 12, 0, 2 * Math.PI);
+            context.fillStyle = context.strokeStyle;
+            context.stroke();
+            context.fill();
+            context.moveTo(x, y);
+          }
 
-        // Function that empty the canvas
-        if (res[0] == "delete")
-        {
-          context.clearRect(0, 0, canvas.width, canvas.height);
+          // Function that continues to paint on canvas
+          if (res[0] == "paint")
+          {
+            x = parseInt(res[2]);
+            y = parseInt(res[3]);
+            size = parseInt(res[4]);
+            color = res[5];
+            context.lineWidth = size;
+            context.strokeStyle = color;
+            context.lineTo(x, y);
+            context.stroke();
+          }
+
+          // Function that empty the canvas
+          if (res[0] == "delete")
+          {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+          }
         }
       });
     }

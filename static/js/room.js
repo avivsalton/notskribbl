@@ -4,6 +4,8 @@ $(document).ready(function() {
 	var button = document.getElementById("startgame");
 	var roundsbar = document.getElementById("rounds");
 
+	roundsbar.selectedIndex = parseInt(appConfig.rounds);
+
 	if (appConfig.isRoomAdmin == "False")
 	{
 		button.style.background = "#aaaaaa";
@@ -33,7 +35,23 @@ $(document).ready(function() {
 
     	if (res[0] == "startgame")
     	{
-    		alert("Starting game...")
+    		var form = document.createElement("form");
+    		form.setAttribute("method", "POST");
+
+    		var f = document.createElement("input");
+    		f.setAttribute("name", "username");
+    		f.setAttribute("type", "hidden");
+    		f.setAttribute("value", appConfig.username);
+    		form.appendChild(f);
+
+    		var f1 = document.createElement("input");
+    		f1.setAttribute("name", "color");
+    		f1.setAttribute("type", "hidden");
+    		f1.setAttribute("value", appConfig.color);
+    		form.appendChild(f1);
+
+    		document.body.appendChild(form);
+    		form.submit();
     	} 
     });
 

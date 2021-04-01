@@ -51,7 +51,7 @@ window.addEventListener('load', function () {
         context.fill();
         context.moveTo(ev._x, ev._y);
         tool.started = true;
-        socket.send("startPaint$%*!" + appConfig.username + "$%*!" + ev._x + "$%*!" + ev._y + "$%*!" + context.lineWidth + "$%*!" + context.strokeStyle); // Sending to the server to start painting on viewers' side 
+        socket.send("startPaint$%*!" + appConfig.roomid + "$%*!" + ev._x + "$%*!" + ev._y + "$%*!" + context.lineWidth + "$%*!" + context.strokeStyle); // Sending to the server to start painting on viewers' side 
     };
 
     // This function is called every time you move the mouse. Obviously, it only 
@@ -60,7 +60,7 @@ window.addEventListener('load', function () {
     this.mousemove = function (ev) {
       if (tool.started) {
         context.lineTo(ev._x, ev._y);
-        socket.send("paint$%*!" + appConfig.username + "$%*!" + ev._x + "$%*!" + ev._y); // Sending to the server to continue painting on viewers' side 
+        socket.send("paint$%*!" + appConfig.roomid + "$%*!" + ev._x + "$%*!" + ev._y); // Sending to the server to continue painting on viewers' side 
         context.stroke();
       }
     };
