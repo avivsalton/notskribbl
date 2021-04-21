@@ -5,15 +5,19 @@ Title for game
 {% block content %}
 <br/>
 	<b><div style="font-size: 40px; text-align: center;">WELCOME TO THE PAINTING PALACE, {{ username }}</div></b>
+	<center>
 	<div class="wrapper">
 		<div class="players" id="players">
 		</div>
-		<canvas class="canvas" id="canvas" width="800" height="500"></canvas>
+		<canvas class="canvas" id="canvas" width="800" height="500"></canvas>		
+		<div class="infoCanvas"><div id="word">banana</div><span id="time"><div id="timer">01:30</div></span></div>
 		<script type ="text/javascript" src="{{ url_for('static', filename='js/viewer.js') }}"></script>
 		<script type ="text/javascript" src="{{ url_for('static', filename='js/chat.js') }}"></script>
+		<script type ="text/javascript" src="{{ url_for('static', filename='js/game.js') }}"></script>
 		<div class="chat">
 			<div class="messageBox" id="messages"></div>
 			<input type="text" id="chatinput" name="text" placeholder="Type in chat..." style="width: 100%;"><br>
 		</div>
 	</div>
+	</center>
 {% endblock %}

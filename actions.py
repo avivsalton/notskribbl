@@ -1,4 +1,5 @@
 import random
+import os
 
 def generate_id(list):
     str = ""
@@ -13,4 +14,9 @@ def generate_id(list):
                 str = str + chr(65 + num)
         if str not in list:
             return str
+
+def dir_last_updated(folder):
+    return str(max(os.path.getmtime(os.path.join(root_path, f))
+                   for root_path, dirs, files in os.walk(folder)
+                   for f in files))
 

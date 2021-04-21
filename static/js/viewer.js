@@ -11,22 +11,22 @@ if(window.addEventListener) {
 
       var socket = io.connect('http://' + appConfig.ip); // Connects to server through socket.io
 
-      socket.on('message', function(msg) {
+      socket.emit("paint", {data: "viewerconnect$%*!" + appConfig.roomid + "$%*!" + appConfig.username})
 
+      socket.on('paint', function(msg) {
         var res = msg.split("$%*!"); // Gets message and splits it. Drawing messages are sent and recieved like that: 
                                      // 'paint$%*!{x_location}$%*!{y_location}$%*!{line_size}$%*!{line_color}'
         var x, y, size, color;
-
-        if (res[1] == appConfig.roomid)
+        if (res[2] == appConfig.roomid)
         {
           // Function that starts painting on canvas
           if (res[0] == "startPaint")
           { 
             context.beginPath();
-            x = parseInt(res[2]);
-            y = parseInt(res[3]);
-            size = parseInt(res[4]);
-            color = res[5];
+            x = parseInt(res[3]);
+            y = parseInt(res[4]);
+            size = parseInt(res[5]);
+            color = res[6];
             context.lineWidth = size;
             context.strokeStyle = color;
             context.arc(x, y, context.lineWidth / 12, 0, 2 * Math.PI);
@@ -39,10 +39,10 @@ if(window.addEventListener) {
           // Function that continues to paint on canvas
           if (res[0] == "paint")
           {
-            x = parseInt(res[2]);
-            y = parseInt(res[3]);
-            size = parseInt(res[4]);
-            color = res[5];
+            x = parseInt(res[3]);
+            y = parseInt(res[4]);
+            size = parseInt(res[5]);
+            color = res[6];
             context.lineWidth = size;
             context.strokeStyle = color;
             context.lineTo(x, y);
