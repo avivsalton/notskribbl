@@ -177,7 +177,7 @@ h2 {
 	position: fixed;
 	margin: auto;
 	margin-top: -45px;
-	margin-left: 272px;
+	margin-left: 273px;
 	width: 800px;
 	display: flex;
 }
@@ -194,4 +194,38 @@ h2 {
 	font-weight: bold;
 	text-align: left;
 	flex: 2;
+}
+
+.optionChooser {
+	margin-top: -561px;
+	margin-left: -1px;
+	width: 800px;
+	height: 500px;
+	background-color: #B7B7B7;
+	border: 1px solid black;
+	position: fixed;
+}
+
+.optionChooser .msg {
+	font-size: 40px;
+	font-weight: bold;
+	margin-top: 170px;
+	margin-bottom: 30px;
+}
+
+.optionChooser button {
+	margin-left: 10px;
+	border: none;
+	width: 150px;
+	height: 40px;
+	font-size: 20px;
+	border-radius: 5px;
+}
+
+.optionChooser button:hover {
+	background-color: #878787;
+}
+
+.optionChooser button:ACTIVE {
+	background-color: #000000;
 }

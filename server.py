@@ -12,6 +12,7 @@ colors = ['#0099cc', '#009933', '#cc0000', '#ff33cc', '#669999', '#cc9900']     
 players = []    # Players for each room
 rooms = []      # list of rooms and their privacy
 viewers = []
+gamesid = []
 
 public = { "id": "public", "admin": "none", "rounds": 100000, "isPrivate": False}
 rooms.append(public)
@@ -43,6 +44,7 @@ def rooms_site(roomid, index=0, username=''):
             else:
                 username = request.form.get("username")
                 index = random.randint(0, 5)
+                item["count"] = item["count"] + 1
                 return rooms_site(roomid, index, username)
         else:
             return render_template("enteroom.html")
@@ -67,7 +69,7 @@ def signin():
         index = random.randint(0, 5)
         if type == "Create a Room":
             id = generate_id(rooms)
-            curr_room = {"id" : id, "admin" : username, "rounds": 0, "isPrivate": True}
+            curr_room = {"id" : id, "admin" : username, "rounds": 0, "count": 0, "currentWord": "", "isPrivate": True}
             rooms.append(curr_room)
             return redirect("http://" + ip + "/room/" + id, code=307)
         if username != "painter":
@@ -91,7 +93,6 @@ def viewer(username, color, roomid):
 @socketio.on('message')
 def handleMessage(msg):
     if msg:
-        print(msg)
         splited = msg.split("$%*!")
         if ("<script" in msg) or ("'<'" in msg and "script" in msg):
             ip_list.append(request.environ.get('REMOTE_ADDR'))
@@ -153,6 +154,37 @@ def sendPaint(json):
         if splited[0] == 'viewerconnect':
             viewer = { "username" : splited[2], "roomid" : splited[1], "sid" : request.sid }
             viewers.append(viewer)
+            return None
+
+@socketio.on('game')
+def sendPaint(json):
+    msg = json["data"]
+    print("game: " + msg)
+    if msg:
+        splited = msg.split("$%*!")
+
+        if splited[0] == 'gameconnect':
+            gamer = { "username" : splited[2], "roomid" : splited[1], "sid" : request.sid }
+            gamesid.append(gamer)
+
+            count = sum(p["roomid"] == splited[1] for p in players)
+            item = next((item for item in rooms if item["id"] == splited[1]), None)
+            if count == item["count"]:
+                user = ""
+                for g in gamesid:
+                    if g["roomid"] == splited[1]:
+                        if user == "":
+                            user = g["username"]
+                        print(g)
+                        emit("game", "choose$%*!" + user, room=g["sid"])
+
+        if splited[0] == "start":
+            item = next((item for item in rooms if item["id"] == splited[1]), None)
+            item["currentWord"] = splited[3]
+            for g in gamesid:
+                if g["roomid"] == splited[1] and g["sid"] != request.sid:
+                    emit("game", msg, room=g["sid"])
+
             return None
 
 
