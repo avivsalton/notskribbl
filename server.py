@@ -6,7 +6,7 @@ import operator
 
 app = Flask(__name__)
 username = ""
-ip = "10.100.102.141"
+ip = "10.100.102.197"
 
 colors = ['#0099cc', '#009933', '#cc0000', '#ff33cc', '#669999', '#cc9900']     # Colors generated for each user for chat
 players = []    # Players for each room
@@ -18,7 +18,7 @@ public = { "id": "public", "admin": "none", "rounds": 100000, "isPrivate": False
 rooms.append(public)
 
 app.config['SECRET_KEY'] = 'mysecret'
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode='eventlet')
 
 ip_list = []
 
@@ -45,6 +45,7 @@ def rooms_site(roomid, index=0, username=''):
                 username = request.form.get("username")
                 index = random.randint(0, 5)
                 item["count"] = item["count"] + 1
+                item["guessing"] = item["guessing"] + 1
                 return rooms_site(roomid, index, username)
         else:
             return render_template("enteroom.html")
@@ -69,7 +70,7 @@ def signin():
         index = random.randint(0, 5)
         if type == "Create a Room":
             id = generate_id(rooms)
-            curr_room = {"id" : id, "admin" : username, "rounds": 0, "count": 0, "currentWord": "", "isPrivate": True}
+            curr_room = {"id" : id, "admin" : username, "rounds": 0, "count": 0, "guessing": -1, "currentWord": "", "isPrivate": True}
             rooms.append(curr_room)
             return redirect("http://" + ip + "/room/" + id, code=307)
         if username != "painter":
@@ -97,6 +98,7 @@ def handleMessage(msg):
         if ("<script" in msg) or ("'<'" in msg and "script" in msg):
             ip_list.append(request.environ.get('REMOTE_ADDR'))
             return None
+
         if splited[0] == 'connect':
             user = next((user for user in players if user["username"] == splited[1]), None)
             user["sid"] = request.sid
@@ -104,6 +106,7 @@ def handleMessage(msg):
                 if p["roomid"] == splited[2]:
                     send(splited[0] + "$%*!" + splited[1] + "$%*!" + splited[2], room=p["sid"])
             return None
+
         if splited[0] == 'roomconnect':
             index = random.randint(0, 5)
             curr_player = {"username": splited[1], "roomid": splited[2], "color": colors[index], "sid": request.sid}
@@ -114,6 +117,7 @@ def handleMessage(msg):
                     if p["sid"] != request.sid:
                         send('roomconnect$%*!' + p["username"] + '$%*!' + splited[2], room=request.sid)
             return None
+
         if splited[0] == 'changeroundbar':
             item = next((item for item in rooms if item["id"] == splited[1]), None)
             item["rounds"] = int(splited[2])
@@ -122,11 +126,29 @@ def handleMessage(msg):
                 if p["username"] != item["admin"]:
                     send("changeroundbar$%*!" + splited[1] + "$%*!" + splited[2], room=p["sid"])
             return None
+
         if splited[0] == 'startgame':
             for p in players:
                 if p["roomid"] == splited[1]:
                     send(msg, room=p["sid"])
             return None
+
+        if splited[0] == 'message':
+            item = next((item for item in rooms if item["id"] == splited[2]), None)
+            if splited[4] == item["currentWord"] and splited[1] != item["admin"]:
+                for p in players:
+                    if p["roomid"] == splited[2]:
+                        send("found$%*!" + splited[1] + "$%*!" + splited[2], room=p["sid"])
+
+                item["guessing"] = item["guessing"] - 1
+                print("bruh: " + str(item["guessing"]))
+
+                if item["guessing"] == 0:
+                    for g in gamesid:
+                        if g["roomid"] == splited[2]:
+                            emit("game", "done$%*!" + splited[2], room=g["sid"])
+
+                return None
 
 
         for p in players:
@@ -137,16 +159,20 @@ def handleMessage(msg):
 @socketio.on('paint')
 def sendPaint(json):
     msg = json["data"]
+    print(msg)
     if msg:
         splited = msg.split("$%*!")
 
         if splited[0] == 'startPaint':
             for p in players:
-                if p["roomid"] == splited[2]:
-                    send(msg, room=p["sid"])
+                if p["roomid"] == splited[1]:
+                    emit("paint", msg, room=p["sid"])
+                    print(p["username"], p["sid"])
+            return None
 
         if splited[0] == 'paint':
             for p in viewers:
+                print(p)
                 if p["roomid"] == splited[2] and p["username"] != splited[1]:
                     emit("paint", msg, room=p["sid"])
             return None
@@ -170,13 +196,12 @@ def sendPaint(json):
             count = sum(p["roomid"] == splited[1] for p in players)
             item = next((item for item in rooms if item["id"] == splited[1]), None)
             if count == item["count"]:
-                user = ""
+                user = item["admin"]
                 for g in gamesid:
                     if g["roomid"] == splited[1]:
-                        if user == "":
-                            user = g["username"]
-                        print(g)
+                        print("sent to: " + g["sid"])
                         emit("game", "choose$%*!" + user, room=g["sid"])
+            return None
 
         if splited[0] == "start":
             item = next((item for item in rooms if item["id"] == splited[1]), None)
@@ -192,4 +217,4 @@ def sendPaint(json):
 if __name__ == "__main__":
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-    socketio.run(app, port=80, host="0.0.0.0")
+    socketio.run(app, port=80, host="0.0.0.0", debug=True)

@@ -1,4 +1,7 @@
+var hasStarted = false;
+
 if(window.addEventListener) {
+
     window.addEventListener('load', function () {
 
     	var gDuration;
@@ -126,27 +129,31 @@ if(window.addEventListener) {
 			document.getElementById('optns').style.visibility = "hidden";
 		}
 
-
 		var socket = io.connect('http://' + appConfig.ip);
 
 		socket.emit('game', {data : "gameconnect$%*!" + appConfig.roomid + "$%*!" + appConfig.username} );
 
 		socket.on('game', function(msg) {
-			alert(msg);
-			var res = msg.split("$%*!");
 			var isStarting = false;
+
+			var res = msg.split("$%*!");
 
 			if (res[0] == "start")
 			{
 				startGame(res[3], false);
 			}
 
-			if (res[0] == "choose" && res[1] == appConfig.username)
+			if (res[0] == "done")
+			{
+				alert("done!");
+			}
+
+			if (res[0] == "choose" && res[1] == appConfig.username && isStarting == false)
 			{
 				isStarting = true;
 			}
 
-			if (isStarting == true)
+			if (isStarting == true && hasStarted == false)
 			{
 				selectWords();
 
@@ -157,12 +164,15 @@ if(window.addEventListener) {
 				option1.onclick = function () { startGame(option1.value, true); socket.emit('game', {data : "start$%*!" + appConfig.roomid + "$%*!" + appConfig.username + "$%*!" + option1.value} );}
 				option2.onclick = function () { startGame(option2.value, true); socket.emit('game', {data : "start$%*!" + appConfig.roomid + "$%*!" + appConfig.username + "$%*!" + option2.value} );}
 				option3.onclick = function () { startGame(option3.value, true); socket.emit('game', {data : "start$%*!" + appConfig.roomid + "$%*!" + appConfig.username + "$%*!" + option3.value} );}
+
+				hasStarted = true;
 			}
 
-			else
+			else if (isStarting == false && hasStarted == false)
 			{
 				var msg = res[1] + " is choosing a word";
 				$("#canvasC").append("<div class='optionChooser' id='optns'><div class='msg'>" + msg + "</div></div>");
+				hasStarted = true;
 			}
 		});
 

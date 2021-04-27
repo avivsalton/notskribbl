@@ -1,13 +1,23 @@
 $(document).ready(function() {
 
+	var isVisable = true;
+
 	var socket = io.connect('http://' + appConfig.ip); // Connects to server through socket.io
 
 	// When 'enter' key is pressed, send message in text box
 	$('#chatinput').keypress(function(e){
 		if(e.keyCode==13)
 		{
-	    	socket.send("message$%*!" + appConfig.username + "$%*!" + appConfig.roomid + "$%*!" + appConfig.color + "$%*!" + $('#chatinput').val());
-			$('#chatinput').val('');
+			if (isVisable == true)
+			{
+		    	socket.send("message$%*!" + appConfig.username + "$%*!" + appConfig.roomid + "$%*!" + appConfig.color + "$%*!" + $('#chatinput').val());
+				$('#chatinput').val('');
+			}
+
+			else
+			{
+				$("#messages").append('<div class="message"><div class="user" style="color: ' + appConfig.color + ';">' + appConfig.username + '</div><div class="text">'+ $('#chatinput').val() +'</div></div>');
+			}
 		}
 
 		// Empty the text box after hitting enter
@@ -39,6 +49,16 @@ $(document).ready(function() {
 			{	
 				$("#messages").append('<div class="message"><div class="user" style="color: ' + res[3] + ';">' + res[1] + '</div><div class="text">'+ res[4] +'</div></div>');
 
+			}
+
+			if (res[0] == "found")
+			{
+				$("#messages").append('<div class="message" style="height: 30px;"><div class="user" style="color: #339933; text-align: center;">' + res[1] + ' has found the word</div>');
+
+				if (res[1] == appConfig.username)
+				{
+					isVisable = false;
+				}
 			}
 
 			// Receiving a connection message

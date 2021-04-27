@@ -6,14 +6,15 @@ if(window.addEventListener) {
     {
       // Recognizes canvas element, defining canvas as 2D and default radius of painting
       var canvas = document.getElementById('canvas');
-      context = canvas.getContext('2d');
+      var context = canvas.getContext('2d');
       context.lineWidth = 5;
 
       var socket = io.connect('http://' + appConfig.ip); // Connects to server through socket.io
 
-      socket.emit("paint", {data: "viewerconnect$%*!" + appConfig.roomid + "$%*!" + appConfig.username})
+      socket.emit("paint", { data: "viewerconnect$%*!" + appConfig.roomid + "$%*!" + appConfig.username} );
 
       socket.on('paint', function(msg) {
+        alert(msg);
         var res = msg.split("$%*!"); // Gets message and splits it. Drawing messages are sent and recieved like that: 
                                      // 'paint$%*!{x_location}$%*!{y_location}$%*!{line_size}$%*!{line_color}'
         var x, y, size, color;
