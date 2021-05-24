@@ -2,6 +2,7 @@ $(document).ready(function() {
 
 	var socket = io.connect('http://' + appConfig.ip); // Connects to server through socket.io
 	var button = document.getElementById("startgame");
+	var botbox = document.getElementById("isBot");
 	var roundsbar = document.getElementById("rounds");
 
 	roundsbar.selectedIndex = parseInt(appConfig.rounds);
@@ -11,6 +12,7 @@ $(document).ready(function() {
 		button.style.background = "#aaaaaa";
 		button.disabled = true;
 		roundsbar.disabled = true;
+		document.getElementById("isBot").disabled = true;
 	}
 
 	roundsbar.onchange = function(){
@@ -33,6 +35,18 @@ $(document).ready(function() {
     		roundsbar.selectedIndex = i;
     	}
 
+    	if (res[0] == "botcheckbox" && appConfig.isRoomAdmin == "False" && res[1] == appConfig.roomid)
+    	{
+            if (botbox.checked == false)
+            {
+                botbox.checked = true;
+    		}
+    		else
+    		{
+    		    botbox.checked = false;
+    		}
+    	}
+
     	if (res[0] == "startgame")
     	{
     		var form = document.createElement("form");
@@ -50,6 +64,12 @@ $(document).ready(function() {
     		f1.setAttribute("value", appConfig.color);
     		form.appendChild(f1);
 
+    		var f2 = document.createElement("input");
+    		f2.setAttribute("name", "rounds");
+    		f2.setAttribute("type", "hidden");
+    		f2.setAttribute("value", roundsbar.selectedIndex + 3);
+    		form.appendChild(f2);
+
     		document.body.appendChild(form);
     		form.submit();
     	} 
@@ -57,5 +77,9 @@ $(document).ready(function() {
 
     button.onclick = function () {
     	socket.send("startgame$%*!" + appConfig.roomid);
+    }
+
+    botbox.onclick = function () {
+        socket.send("botcheckbox$%*!" + appConfig.roomid);
     }
 });

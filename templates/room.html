@@ -5,6 +5,7 @@ Welcome to the room!
 {% block content %}
 <script type ="text/javascript" src="{{ url_for('static', filename='js/room.js') }}"></script>
 <h2> WELCOME TO THE GAME ROOM!</h2>
+<center>
 <div class="room">
 	<div class="players" id="players">
 
@@ -21,8 +22,19 @@ Welcome to the room!
 			<option value="9">9</option>
 			<option value="10">10</option>
 		</select>
+		<br>
+		<br>
+		<input type="checkbox" id="isBot" name="bot" value="bot_enabled">
+		<label for="isBot"> Play with Bot</label>
+		<br>
+		<br>
 		<input type="submit" name="submit" id="startgame" value="Start Game">
+		<br>
+		<br>
+		share your link!
+		<br>
+		http://{{ ip }}/room/{{ roomid }}
 	</div>
-share your link! {{ roomid }}
 </div>
+</center>
 {% endblock %}

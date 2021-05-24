@@ -1,18 +1,12 @@
-{% extends 'index.html'%}
+{% extends 'roomheader.html'%}
 {% block title %}
-Title for game
+Welcome to the room!
 {% endblock %}
 {% block content %}
-<br/>
-<b><div style="font-size: 40px; text-align: center;">WELCOME TO THE PAINTING PALACE, {{ username }}</div></b>
-<script type ="text/javascript" src="{{ url_for('static', filename='js/paint.js') }}"></script>
-<script type ="text/javascript" src="{{ url_for('static', filename='js/chat.js') }}"></script>
-<script type ="text/javascript" src="{{ url_for('static', filename='js/game.js') }}"></script>
-<center>
+<script type ="text/javascript" src="{{ url_for('static', filename='js/collect.js') }}"></script>
+<b><div id ="word" style="font-size: 40px; text-align: center;">DRAW THIS PLZ: </div></b>
 <div class="wrapper">
-	<div class="players" id="players">
-	</div>
-	<div class="infoCanvas"><div id="word"> </div><span id="time"><div id="timer">00:00</div></span></div>
+<center>
 	<div class="canvas" id="canvasC">
 		<canvas id="canvas" width="800" height="500"></canvas>
 		<div class="toolbar" id="tools">
@@ -25,15 +19,11 @@ Title for game
 			<button class="button" id="small" style="background: url('{{ url_for('static', filename='pics/small.png') }}'); background-size: contain;"></button>
 			<button class="button" id="medium" style="background: url('{{ url_for('static', filename='pics/medium.png') }}'); background-size: contain;"></button>
 			<button class="button" id="big" style="background: url('{{ url_for('static', filename='pics/big.png') }}'); background-size: contain;"></button>
+			<button class="button" id="fill" style="background-color: #123456"></button>
 			<button class="button" id="clearbt" style="background: url('{{ url_for('static', filename='pics/trashcan.png') }}'); background-size: contain;"></button>
 			<button class="button" id="download" style="background-size: contain;"></button>
 		</div>
 	</div>
-	<div class="chat">
-		<div class="messageBox" id="messages"></div>
-		<input type="text" id="chatinput" name="text" placeholder="Type in chat..." style="width: 100%;"><br>
-	</div>
-	<br>
-</div>
 </center>
+</div>
 {% endblock %}

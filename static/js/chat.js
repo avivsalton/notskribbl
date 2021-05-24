@@ -1,22 +1,23 @@
 $(document).ready(function() {
 
-	var isVisable = true;
-
+	var isVisible = true;
+    var users = [];
 	var socket = io.connect('http://' + appConfig.ip); // Connects to server through socket.io
+	socket.send("requestPlayers$%*!" + appConfig.roomid + "$%*!" + appConfig.username);
 
 	// When 'enter' key is pressed, send message in text box
 	$('#chatinput').keypress(function(e){
 		if(e.keyCode==13)
 		{
-			if (isVisable == true)
+			if (isVisible == true && $('#chatinput').val() != "")
 			{
 		    	socket.send("message$%*!" + appConfig.username + "$%*!" + appConfig.roomid + "$%*!" + appConfig.color + "$%*!" + $('#chatinput').val());
 				$('#chatinput').val('');
 			}
 
-			else
+			else if ($('#chatinput').val() != "")
 			{
-				$("#messages").append('<div class="message"><div class="user" style="color: ' + appConfig.color + ';">' + appConfig.username + '</div><div class="text">'+ $('#chatinput').val() +'</div></div>');
+				$("#messages").append('<div class="message"><div class="user" style="color: ' + appConfig.color + ';">' + appConfig.username + ' (invisible)</div><div class="text">'+ $('#chatinput').val() +'</div></div>');
 			}
 		}
 
@@ -41,7 +42,6 @@ $(document).ready(function() {
     // 'message$%*!{username}$%*!{username_color}$%*!{message}' 
 	socket.on('message', function(msg) {
 		var res = msg.split("$%*!");
-
 		// Receiving a regular chat message
 		if (res[2] == appConfig.roomid)
 		{
@@ -54,6 +54,7 @@ $(document).ready(function() {
 			if (res[0] == "found")
 			{
 				$("#messages").append('<div class="message" style="height: 30px;"><div class="user" style="color: #339933; text-align: center;">' + res[1] + ' has found the word</div>');
+				document.getElementById(res[1] + '_points').innerHTML = "Points: " + res[3];
 
 				if (res[1] == appConfig.username)
 				{
@@ -62,10 +63,17 @@ $(document).ready(function() {
 			}
 
 			// Receiving a connection message
-			if (res[0] == "connect")
+			if (res[0] == "connect" && !users.includes(res[1]))
 			{
-				$("#messages").append('<div class="message" style="height: 30px;"><div class="user" style="color: #339933; text-align: center;">' + res[1] + ' has connected</div>');
-				$("#players").append('<div class="gamer"><div class="user">' + res[1] + '</div><div class="points" id="points">Points: 0</div></div>');
+			    if (res[1] != "Bot")
+			    {
+                    $("#messages").append('<div class="message" style="height: 30px;"><div class="user" style="color: #339933; text-align: center;">' + res[1] + ' has connected</div>');
+				}
+
+				$("#players").append('<div class="gamer"><div class="user">' + res[1] + '</div><div class="points" id="' + res[1] + '_points">Points: 0</div></div>');
+
+				users.push(res[1]);
+
 			}
 
 			if (res[0] == "connected")
@@ -74,6 +82,11 @@ $(document).ready(function() {
 				{
 					$("#players").append('<div class="gamer"><div class="user">' + res[1] + '</div><div class="points" id="points">Points: 0</div></div>');
 				}
+			}
+
+			if (res[0] == "visible")
+			{
+			    isVisible = true;
 			}
 
 			// Receiving a disconnection message

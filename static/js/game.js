@@ -1,37 +1,61 @@
+var isDone = false;
+var word = "";
 var hasStarted = false;
+var gDuration = 0;
+var botFound = false;
+var opts = "";
+var reveal = "";
+var option1 = "";
+var option2 = "";
+var option3 = "";
+var roundcount = 1;
 
 if(window.addEventListener) {
 
     window.addEventListener('load', function () {
 
-    	var gDuration;
-    	var words = ['banana', 'monkey', 'bibi', 'hamburger', 'peter griffin', 'apple', 'house', 'donald trump'];
+    	var words = ['Ant', 'Apple', 'Banana', 'Guitar', 'Hourglass', 'House'];
+
+    	function setToolbarVisibility(display)
+    	{
+    		if (appConfig.painting == "True")
+			{
+				document.getElementById('tools').style.visibility = "visible";
+			}
+			else
+			{
+				document.getElementById('tools').style.visibility = "hidden";
+			}
+    	}
 
     	function startTimer(duration, display) 
     	{
 
 		    var timer = duration, minutes, seconds;
-		    setInterval(function () {
-		        minutes = parseInt(timer / 60, 10)
-		        seconds = parseInt(timer % 60, 10);
+		    var intervalId =  setInterval(function () {
+                                    minutes = parseInt(timer / 60, 10)
+                                    seconds = parseInt(timer % 60, 10);
 
-		        minutes = minutes < 10 ? "0" + minutes : minutes;
-		        seconds = seconds < 10 ? "0" + seconds : seconds;
+                                    minutes = minutes < 10 ? "0" + minutes : minutes;
+                                    seconds = seconds < 10 ? "0" + seconds : seconds;
 
-		        display.innerHTML = minutes + ":" + seconds;
+                                    display.innerHTML = minutes + ":" + seconds;
 
-		        if (--timer < 0) {
-		            timer = duration;
-		        }
+                                    if (--timer < 0) {
+                                        timer = duration;
+                                    }
 
-		        if (duration == 0)
-		        {
-		        	return null;
-		        }
+                                    if (duration == 0 || isDone == true)
+                                    {
+                                        duration = 0;
+                                        display.innerHTML = "00:00";
+                                        clearInterval(intervalId);
+                                    }
 
-		        duration--;
+                                    duration--;
+                                    gDuration = duration;
 
-		    }, 1000);
+                                }, 1000);
 
 		}
 
@@ -41,7 +65,7 @@ if(window.addEventListener) {
 			var original = word;
 			var wordLength = word.length;
 
-			if (isPainting)
+			if (isPainting == "True")
 			{
 				display.innerHTML = word;
 				return null;
@@ -63,36 +87,55 @@ if(window.addEventListener) {
 			var taken = [];
 			var x = 0;
 
-			setInterval(function() { 
-				if (x < word.length / 3 && duration > 0)
-				{
-					var index = Math.floor(Math.random() * wordLength);
-					if (!taken.includes(index))
-					{
-						taken.push(index);
-						x++;
-					}
+			var intervalId = setInterval(function() {
+                                            if (x < word.length / 3 && gDuration > 0)
+                                            {
+                                                if (isDone == true)
+                                                {
+                                                    return null;
+                                                }
 
-					display.innerHTML = "";
+                                                var index = Math.floor(Math.random() * wordLength);
 
-					for (i = 0; i < wordLength; i++) {
-						if (taken.includes(i)){
-							display.innerHTML = display.innerHTML + original.charAt(i);
-						}
+                                                while (taken.includes(index))
+                                                {
+                                                    index = Math.floor(Math.random() * wordLength);
+                                                }
 
-						else
-						{
-							if (original.charAt(i) == " ")
-							{
-								display.innerHTML = display.innerHTML + "&nbsp;&nbsp;";
-							}
-							else
-							{
-								display.innerHTML = display.innerHTML + "_ ";
-							}
-						}
-				}
-			} }, (gDuration / 3) * 1000);
+                                                taken.push(index);
+
+                                                x++;
+
+                                                display.innerHTML = "";
+
+
+
+                                                for (i = 0; i < wordLength; i++) {
+                                                    if (taken.includes(i)){
+                                                        display.innerHTML = display.innerHTML + original.charAt(i);
+                                                    }
+
+                                                    else
+                                                    {
+                                                        if (original.charAt(i) == " ")
+                                                        {
+                                                            display.innerHTML = display.innerHTML + "&nbsp;&nbsp;";
+                                                        }
+
+                                                        else
+                                                        {
+                                                            display.innerHTML = display.innerHTML + "_ ";
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            else
+
+                                            {
+                                                clearInterval(intervalId);
+                                            }
+                                        }, 30000);
 		}
 
 		function selectWords()
@@ -112,8 +155,26 @@ if(window.addEventListener) {
 			}
 
 			var msg = "Choose one word: ";
-			$("#canvasC").append("<div class='optionChooser' id='optns'><div class='msg'>" + msg + "</div><button id='option1' value='" + words[chosen[0]] + "'>" + words[chosen[0]] + "</button>" +
-				"<button id='option2' value='" + words[chosen[1]] + "'>" + words[chosen[1]] + "</button><button id='option3' value='" + words[chosen[2]] + "'>" + words[chosen[2]] + "</button></div>");
+
+            opts = Math.floor(Math.random() * 999999) + 100000;
+			while (opts.toString(10).localeCompare(reveal.toString(10)) == 0){
+			    opts = toString(Math.floor(Math.random() * 999999) + 100000);
+			}
+
+			option1 = Math.floor(Math.random() * 999999) + 100000;
+            option2 = Math.floor(Math.random() * 999999) + 100000;
+            option3 = Math.floor(Math.random() * 999999) + 100000;
+
+			while (option1.toString(10).localeCompare(option2.toString(10)) == 0 || option2.toString(10).localeCompare(option3.toString(10)) == 0 || option1.toString(10).localeCompare(option3.toString(10)) == 0){
+			    option1 = toString(Math.floor(Math.random() * 999999) + 100000);
+                option2 = toString(Math.floor(Math.random() * 999999) + 100000);
+                option3 = toString(Math.floor(Math.random() * 999999) + 100000);
+			}
+
+			$("#canvasC").append("<div class='optionChooser' id='" + opts + "'><div class='msg'>" + msg + "</div><button id='" + option1 + "' value='" + words[chosen[0]] + "'>" + words[chosen[0]] + "</button>" +
+				"<button id='" + option2 + "' value='" + words[chosen[1]] + "'>" + words[chosen[1]] + "</button><button id='" + option3 + "' value='" + words[chosen[2]] + "'>" + words[chosen[2]] + "</button></div>");
+
+			painting();
 		}
 
 		function startGame(value, isPainting)
@@ -124,11 +185,63 @@ if(window.addEventListener) {
 			startTimer(duration, timer);
 
 			var word = value;
-			revealWord(word, document.getElementById('word'), isPainting);
+			document.getElementById(opts).style.visibility = "hidden";
 
-			document.getElementById('optns').style.visibility = "hidden";
+			if (appConfig.painting == "True")
+			{
+				revealWord(word, document.getElementById('word'), isPainting);
+
+                if (appConfig.bot == "True")
+                {
+                    var intervalId = setInterval(function () {
+                                        if (botFound == false)
+                                        {
+                                            var image = document.getElementById('canvas').toDataURL();
+                                            socket.emit('photo',{data: appConfig.roomid + "$%*!" + image});
+                                        }
+                                        else if (isDone == true || botFound == true || (isDone == true && botFound == true))
+                                        {
+                                            clearInterval(intervalId);
+                                        }
+                                    }, 4000);
+                }
+                return null;
+			}
+
+			revealWord(word, document.getElementById('word'), isPainting);
 		}
 
+		function showWordsWindow()
+		{
+            selectWords();
+
+			var bt_option1 = document.getElementById(option1);
+			var bt_option2 = document.getElementById(option2);
+			var bt_option3 = document.getElementById(option3);
+
+			bt_option1.onclick = function () { isDone = false; socket.emit('game', {data : "start$%*!" + appConfig.roomid + "$%*!" + appConfig.username + "$%*!" + bt_option1.value} ); word = bt_option1.value; startGame(bt_option1.value, appConfig.painting); }
+			bt_option2.onclick = function () { isDone = false; socket.emit('game', {data : "start$%*!" + appConfig.roomid + "$%*!" + appConfig.username + "$%*!" + bt_option2.value} ); word = bt_option2.value; startGame(bt_option2.value, appConfig.painting); }
+			bt_option3.onclick = function () { isDone = false; socket.emit('game', {data : "start$%*!" + appConfig.roomid + "$%*!" + appConfig.username + "$%*!" + bt_option3.value} ); word = bt_option3.value; startGame(bt_option3.value, appConfig.painting); }
+
+			hasStarted = true;
+		}
+
+		function whoChoosesWord(username)
+		{
+		    var msg = username + " is choosing a word";
+
+		    opts = Math.floor(Math.random() * 999999) + 100000;
+			while (opts.toString(10).localeCompare(reveal.toString(10)) == 0){
+			    opts = toString(Math.floor(Math.random() * 999999) + 100000);
+			}
+
+			$("#canvasC").append("<div class='optionChooser' id='" + opts + "'><div class='msg'>" + msg + "</div></div>");
+			hasStarted = true;
+
+			viewing();
+		}
+
+		setToolbarVisibility();
 		var socket = io.connect('http://' + appConfig.ip);
 
 		socket.emit('game', {data : "gameconnect$%*!" + appConfig.roomid + "$%*!" + appConfig.username} );
@@ -138,14 +251,73 @@ if(window.addEventListener) {
 
 			var res = msg.split("$%*!");
 
+            if (res[0] == "botFound")
+            {
+                botFound = true;
+            }
+
 			if (res[0] == "start")
 			{
-				startGame(res[3], false);
+				startGame(res[3], appConfig.painting);
+				word = res[3];
 			}
 
 			if (res[0] == "done")
 			{
-				alert("done!");
+				isDone = true;
+				botFound = false;
+
+                reveal = Math.floor(Math.random() * 999999) + 100000;
+                while (opts.toString(10).localeCompare(reveal.toString(10)) == 0){
+			        reveal = toString(Math.floor(Math.random() * 999999) + 100000);
+			    }
+
+
+				$("#canvasC").append("<div class='optionChooser' id='" + reveal + "'><div class='msg'>" + "The word was: " + word +  "</div></div>");
+
+                setTimeout(function() {
+                    document.getElementById(reveal).style.visibility = "hidden";
+
+                    if (appConfig.painting == "True")
+				        {
+					appConfig.painting = "False";
+					viewing();
+					whoChoosesWord(res[2]);
+
+                    }
+                    else
+                    {
+                        if (res[2] == appConfig.username)
+                        {
+                            appConfig.painting = "True";
+                            painting();
+                            showWordsWindow();
+                        }
+                        else
+                        {
+                            viewing();
+                            whoChoosesWord(res[2]);
+                        }
+				    }
+
+				    setToolbarVisibility();
+				}, 2000);
+			}
+
+			if (res[0] == "doneGame")
+			{
+			    $("#canvasC").append("<div class='optionChooser' id='gameover'><div class='msg'>Game Over!</div></div>");
+			}
+
+			if (res[0] == "round")
+			{
+			    $("#canvasC").append("<div class='optionChooser' id='round" + roundcount.toString(10) + "'><div class='msg'>Round " + res[1] + "</div></div>");
+
+			    setTimeout(function() {
+			        var nameround = 'round' + roundcount.toString(10);
+                    document.getElementById(nameround).style.visibility = "hidden";
+                    roundcount = roundcount + 1;
+				}, 2000);
 			}
 
 			if (res[0] == "choose" && res[1] == appConfig.username && isStarting == false)
@@ -155,25 +327,14 @@ if(window.addEventListener) {
 
 			if (isStarting == true && hasStarted == false)
 			{
-				selectWords();
-
-				var option1 = document.getElementById('option1');
-				var option2 = document.getElementById('option2');
-				var option3 = document.getElementById('option3');
-
-				option1.onclick = function () { startGame(option1.value, true); socket.emit('game', {data : "start$%*!" + appConfig.roomid + "$%*!" + appConfig.username + "$%*!" + option1.value} );}
-				option2.onclick = function () { startGame(option2.value, true); socket.emit('game', {data : "start$%*!" + appConfig.roomid + "$%*!" + appConfig.username + "$%*!" + option2.value} );}
-				option3.onclick = function () { startGame(option3.value, true); socket.emit('game', {data : "start$%*!" + appConfig.roomid + "$%*!" + appConfig.username + "$%*!" + option3.value} );}
-
-				hasStarted = true;
+				showWordsWindow();
 			}
 
 			else if (isStarting == false && hasStarted == false)
 			{
-				var msg = res[1] + " is choosing a word";
-				$("#canvasC").append("<div class='optionChooser' id='optns'><div class='msg'>" + msg + "</div></div>");
-				hasStarted = true;
+				whoChoosesWord(res[1]);
 			}
+
 		});
 
 }, false); }

@@ -30,6 +30,7 @@ h2 {
 }
 
 .canvas {
+	background-color: #ffffff;
 	cursor: crosshair;
 	width: 800px;
 	height: 500px;
@@ -135,7 +136,6 @@ h2 {
 	width: 1000px;
 	height: 500px;
 	margin: 25px;
-	margin-left: 270px;
 }
 
 .options {
