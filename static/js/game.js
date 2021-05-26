@@ -9,6 +9,8 @@ var option1 = "";
 var option2 = "";
 var option3 = "";
 var roundcount = 1;
+var socket = io.connect('http://' + appConfig.ip);
+var haveAllGuesed = false;
 
 if(window.addEventListener) {
 
@@ -30,7 +32,6 @@ if(window.addEventListener) {
 
     	function startTimer(duration, display) 
     	{
-
 		    var timer = duration, minutes, seconds;
 		    var intervalId =  setInterval(function () {
                                     minutes = parseInt(timer / 60, 10)
@@ -49,6 +50,10 @@ if(window.addEventListener) {
                                     {
                                         duration = 0;
                                         display.innerHTML = "00:00";
+                                        if (appConfig.painting == "True" && duration == 0 && haveAllGuesed == false)
+                                        {
+                                            socket.emit('game', {data: "endGame$%*!" + appConfig.roomid});
+                                        }
                                         clearInterval(intervalId);
                                     }
 
@@ -92,6 +97,7 @@ if(window.addEventListener) {
                                             {
                                                 if (isDone == true)
                                                 {
+                                                    clearInterval(intervalId);
                                                     return null;
                                                 }
 
@@ -129,14 +135,16 @@ if(window.addEventListener) {
                                                     }
                                                 }
                                             }
+                                        }, 25000);
+            setInterval(function() {
+                if (isDone == true)
+                {
+                    clearInterval(intervalId);
+                    return null;
+                }
 
-                                            else
-
-                                            {
-                                                clearInterval(intervalId);
-                                            }
-                                        }, 30000);
-		}
+            }, 1000);
+        }
 
 		function selectWords()
 		{
@@ -173,23 +181,23 @@ if(window.addEventListener) {
 
 			$("#canvasC").append("<div class='optionChooser' id='" + opts + "'><div class='msg'>" + msg + "</div><button id='" + option1 + "' value='" + words[chosen[0]] + "'>" + words[chosen[0]] + "</button>" +
 				"<button id='" + option2 + "' value='" + words[chosen[1]] + "'>" + words[chosen[1]] + "</button><button id='" + option3 + "' value='" + words[chosen[2]] + "'>" + words[chosen[2]] + "</button></div>");
-
-			painting();
 		}
 
 		function startGame(value, isPainting)
 		{
-			var duration = 60 * 1.5;
+		    haveAllGuesed = false;
+			var duration = 90;
 			gDuration = duration;
 			timer = document.getElementById('timer');
-			startTimer(duration, timer);
 
 			var word = value;
 			document.getElementById(opts).style.visibility = "hidden";
+			revealWord(word, document.getElementById('word'), isPainting);
+			startTimer(duration, timer);
 
 			if (appConfig.painting == "True")
 			{
-				revealWord(word, document.getElementById('word'), isPainting);
+                painting();
 
                 if (appConfig.bot == "True")
                 {
@@ -205,10 +213,11 @@ if(window.addEventListener) {
                                         }
                                     }, 4000);
                 }
-                return null;
+            }
+            else
+            {
+                viewing();
 			}
-
-			revealWord(word, document.getElementById('word'), isPainting);
 		}
 
 		function showWordsWindow()
@@ -237,12 +246,9 @@ if(window.addEventListener) {
 
 			$("#canvasC").append("<div class='optionChooser' id='" + opts + "'><div class='msg'>" + msg + "</div></div>");
 			hasStarted = true;
-
-			viewing();
 		}
 
 		setToolbarVisibility();
-		var socket = io.connect('http://' + appConfig.ip);
 
 		socket.emit('game', {data : "gameconnect$%*!" + appConfig.roomid + "$%*!" + appConfig.username} );
 
@@ -260,12 +266,22 @@ if(window.addEventListener) {
 			{
 				startGame(res[3], appConfig.painting);
 				word = res[3];
+				isDone = false;
 			}
 
 			if (res[0] == "done")
 			{
 				isDone = true;
 				botFound = false;
+
+				if (res[3] == "True")
+				{
+				    haveAllGuesed = true;
+				}
+				else
+				{
+				    haveAllGuesed = false;
+				}
 
                 reveal = Math.floor(Math.random() * 999999) + 100000;
                 while (opts.toString(10).localeCompare(reveal.toString(10)) == 0){
@@ -279,23 +295,20 @@ if(window.addEventListener) {
                     document.getElementById(reveal).style.visibility = "hidden";
 
                     if (appConfig.painting == "True")
-				        {
-					appConfig.painting = "False";
-					viewing();
-					whoChoosesWord(res[2]);
-
+				    {
+                        appConfig.painting = "False";
+                        whoChoosesWord(res[2]);
                     }
+
                     else
                     {
                         if (res[2] == appConfig.username)
                         {
                             appConfig.painting = "True";
-                            painting();
                             showWordsWindow();
                         }
                         else
                         {
-                            viewing();
                             whoChoosesWord(res[2]);
                         }
 				    }

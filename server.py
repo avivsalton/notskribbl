@@ -8,7 +8,7 @@ import threading
 
 app = Flask(__name__)
 username = ""
-ip = "10.100.102.32"
+ip = "10.100.102.106"
 
 players = []    # Players for each room
 rooms = []      # list of rooms and their privacy
@@ -200,7 +200,8 @@ def handleMessage(msg):
                     curr_drawer = drawer["list"][drawer["index"]]
                     for g in gamesid:
                         if g["roomid"] == splited[2]:
-                            emit("game", "done$%*!" + splited[2] + "$%*!" + curr_drawer, room=g["sid"])
+                            emit("game", "done$%*!" + splited[2] + "$%*!" + curr_drawer + "$%*!True", room=g["sid"])
+                            print("sent!")
 
                     for p in viewers:
                         if p["roomid"] == splited[2]:
@@ -272,6 +273,7 @@ def sendPaint(json):
 @socketio.on('game')
 def sendPaint(json):
     msg = json["data"]
+    print(msg)
     if msg:
         splited = msg.split("$%*!")
 
@@ -304,6 +306,51 @@ def sendPaint(json):
             t = threading.Thread(target=startTimer, args=[item, item["id"], splited[2], drawers, gamesid, viewers])
             t.start()
             return None
+
+        if splited[0] == "endGame":
+            drawer = next((drawer for drawer in drawers if drawer["id"] == splited[1]), None)
+            item = next((item for item in rooms if item["id"] == splited[1]), None)
+
+            curr_drawer = None
+            print(item["rounds"], drawer["current_round"])
+            if drawer["index"] == item["count"] - 1:
+                drawer["index"] = 0
+                if drawer["current_round"] == item["rounds"]:
+                    for g in gamesid:
+                        if g["roomid"] == splited[1]:
+                            emit("game", "doneGame$%*!" + splited[1], room=g["sid"])
+                    return None
+
+                drawer["current_round"] = drawer["current_round"] + 1
+
+                for g in gamesid:
+                    if g["roomid"] == splited[1]:
+                        emit("game", "round$%*!" + str(drawer["current_round"]), room=g["sid"])
+            else:
+                drawer["index"] = drawer["index"] + 1
+                curr_drawer = drawer["list"][drawer["index"]]
+
+            curr_drawer = drawer["list"][drawer["index"]]
+            for g in gamesid:
+                if g["roomid"] == splited[1]:
+                    emit("game", "done$%*!" + splited[1] + "$%*!" + curr_drawer + "$%*!False", room=g["sid"])
+
+            for p in viewers:
+                if p["roomid"] == splited[1]:
+                    send("visible$%*!" + splited[1], room=p["roomid"])
+                    emit("paint", "terminate$%*!" + p["username"] + "$%*!" + splited[1], room=p["sid"])
+                    print("sent terminate!")
+
+            emit("paint", "terminate$%*!" + username + "$%*!" + splited[1], room=drawer["id"])
+
+            bot = next((bot for bot in players if bot["username"] == "Bot"), None)
+
+            if bot is None:
+                item["guessing"] = item["count"] - 1
+            else:
+                item["guessing"] = item["count"]
+
+            item["duaration"] = 0
 
 @socketio.on('photo')
 def savePhoto(json):

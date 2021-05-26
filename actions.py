@@ -68,30 +68,9 @@ def calculateScore(duaration):
     return duaration * 5
 
 def startTimer(room, room_id, username, drawers, gamesid, viewers):
-    
-    start = room["duaration"]
-    count = 0
+
     while room["duaration"] != 0:
         room["duaration"] = room["duaration"] - 1
         time.sleep(1)
-        count = count + 1
-        print(room["duaration"])
-
-    '''
-    if start == count:
-        drawer = next((drawer for drawer in drawers if drawer["id"] == room_id), None)
-        curr_drawer = drawer["list"][drawer["index"]]
-        for g in gamesid:
-            if g["roomid"] == room_id:
-                emit("game", "done$%*!" + room_id + "$%*!" + curr_drawer, room=g["roomid"])
-
-        for p in viewers:
-            if p["id"] == room_id:
-                send("visible$%*!" + room_id, room=p["roomid"])
-                emit("paint", "terminate$%*!" + p["username"] + "$%*!" + room_id, room=p["roomid"])
-                print("sent terminate!")
-
-        emit("paint", "terminate$%*!" + username + "$%*!" + room_id, room=drawer["id"])
-        '''
 
     return None
